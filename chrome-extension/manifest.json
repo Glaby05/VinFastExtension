@@ -1,0 +1,17 @@
+    {
+      "manifest_version": 3,
+      "name": "VinFast Extension",
+      "version": "1.0",
+      "description": "A simple example Chrome extension.",
+      "permissions": ["activeTab", "scripting", "storage"],
+      "host_permissions": ["https://vinfastauto.ca/*", "http://localhost:5050/*"],
+      
+      "content_scripts": [
+        {
+          "matches": ["https://vinfastauto.ca/*"],
+          "js": ["content.js"],
+          "css": ["content.css"]
+        }
+      ]
+      
+  }
