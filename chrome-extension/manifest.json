@@ -4,14 +4,19 @@
       "version": "1.0",
       "description": "A simple example Chrome extension.",
       "permissions": ["activeTab", "scripting", "storage"],
-      "host_permissions": ["https://vinfastauto.ca/*", "http://localhost:5050/*"],
+      "host_permissions": ["https://vinfastauto.ca/*", "http://vinfastauto.ca/*", "https://*.vinfastauto.ca/*", "http://*.vinfastauto.ca/*","http://localhost:5050/*"],
       
       "content_scripts": [
         {
-          "matches": ["https://vinfastauto.ca/*"],
+          "matches": ["https://vinfastauto.ca/*", "http://vinfastauto.ca/*", "https://*.vinfastauto.ca/*", "http://*.vinfastauto.ca/*"],
           "js": ["content.js"],
           "css": ["content.css"]
         }
-      ]
-      
+      ],
+      "action": {
+        "default_title": "Inject VinFast Button"
+      },
+      "background": {
+        "service_worker": "background.js"
+      }
   }
