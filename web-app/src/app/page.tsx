@@ -7,8 +7,8 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect to globe page
-    router.push('/globe');
+    // Redirect to hero page
+    router.push('/hero');
   }, [router]);
 
   return null;
