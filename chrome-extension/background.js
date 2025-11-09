@@ -1,5 +1,6 @@
 // background.js
 chrome.action.onClicked.addListener((tab) => {
+  if (!tab || !tab.id) return;
   // Inject both JS and CSS into the current tab
   chrome.scripting.insertCSS({
     target: { tabId: tab.id },
