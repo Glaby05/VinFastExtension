@@ -11,6 +11,13 @@ interface Pin {
   color: string;
 }
 
+interface ChargingStation {
+  id: string;
+  position: { lat: number; lng: number };
+  name: string;
+  placeId?: string;
+}
+
 const PIN_CONFIG = {
   home: { label: "Home", color: "#3b82f6", icon: "🏠" },
   work: { label: "Work/School", color: "#ef4444", icon: "🏢" },
@@ -43,6 +50,9 @@ export default function GoogleMapPanel({ visibleToken }: { visibleToken?: number
   const [isLoadingRoute, setIsLoadingRoute] = useState(false);
   const [routeError, setRouteError] = useState<string | null>(null);
   const directionsServiceRef = useRef<google.maps.DirectionsService | null>(null);
+  const [chargingStations, setChargingStations] = useState<ChargingStation[]>([]);
+  const [isLoadingChargers, setIsLoadingChargers] = useState(false);
+  const placesServiceRef = useRef<google.maps.places.PlacesService | null>(null);
 
   // Get API key from environment variable
   // For development, you can set this in .env.local: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_key_here
@@ -59,6 +69,13 @@ export default function GoogleMapPanel({ visibleToken }: { visibleToken?: number
     setMap(map);
     // Initialize DirectionsService when map is loaded
     directionsServiceRef.current = new google.maps.DirectionsService();
+    // Initialize PlacesService when map is loaded (requires a div or the map)
+    if (window.google && window.google.maps && window.google.maps.places) {
+      placesServiceRef.current = new google.maps.places.PlacesService(map);
+      console.log('PlacesService initialized');
+    } else {
+      console.error('Places library not loaded');
+    }
   }, []);
 
   const onMapClick = useCallback((e: google.maps.MapMouseEvent) => {
@@ -78,14 +95,13 @@ export default function GoogleMapPanel({ visibleToken }: { visibleToken?: number
       setPins((currentPins) => {
         const updatedPins = [...currentPins, newPin];
         
-        // Auto-show route if Home and Work pins exist
-        if (autoRoute) {
-          const homePin = updatedPins.find(p => p.type === "home");
-          const workPin = updatedPins.find(p => p.type === "work");
-          if (homePin && workPin) {
-            setSelectedPins([homePin.id, workPin.id]);
-            setShowRoute(true);
-          }
+        // Auto-show route when auto-route is enabled and we have at least 2 pins
+        if (autoRoute && currentPins.length > 0) {
+          // Automatically connect the new pin to the last placed pin
+          // This works for any pin type combination: Home-Work, Home-Favorite, Work-Favorite, etc.
+          const previousPin = currentPins[currentPins.length - 1];
+          setSelectedPins([previousPin.id, newPin.id]);
+          setShowRoute(true);
         }
         
         return updatedPins;
@@ -115,6 +131,90 @@ export default function GoogleMapPanel({ visibleToken }: { visibleToken?: number
       return currentShowRoute;
     });
   };
+
+  // Generate fake charging stations along the route
+  const generateFakeChargingStations = useCallback((routePath: google.maps.LatLngLiteral[], pin1: Pin, pin2: Pin) => {
+    console.log('Generating fake charging stations along route...');
+    setIsLoadingChargers(true);
+    
+    const stations: ChargingStation[] = [];
+    const stationNames = [
+      'EV Charging Station',
+      'Fast Charge Point',
+      'Electric Vehicle Charger',
+      'EV Power Station',
+      'ChargePoint',
+      'FLO Charging',
+      'Tesla Supercharger',
+      'EV Go Station',
+      'Green Charge',
+      'Power Up EV',
+    ];
+
+    // Generate stations along the route path
+    if (routePath.length > 0) {
+      // Sample points along the route (every 5-8 points, with some randomness)
+      const step = Math.max(3, Math.floor(routePath.length / 8)); // 8 stations along route
+      
+      for (let i = step; i < routePath.length - step; i += step) {
+        // Add some randomness to position (offset by up to 200m)
+        const offsetLat = (Math.random() - 0.5) * 0.002; // ~200m
+        const offsetLng = (Math.random() - 0.5) * 0.002;
+        
+        stations.push({
+          id: `fake-charger-${i}-${Date.now()}`,
+          position: {
+            lat: routePath[i].lat + offsetLat,
+            lng: routePath[i].lng + offsetLng,
+          },
+          name: stationNames[Math.floor(Math.random() * stationNames.length)],
+        });
+      }
+    } else {
+      // If no route path, generate stations between the two pins
+      const numStations = 6;
+      for (let i = 1; i < numStations; i++) {
+        const ratio = i / numStations;
+        const offsetLat = (Math.random() - 0.5) * 0.003;
+        const offsetLng = (Math.random() - 0.5) * 0.003;
+        
+        stations.push({
+          id: `fake-charger-${i}-${Date.now()}`,
+          position: {
+            lat: pin1.position.lat + (pin2.position.lat - pin1.position.lat) * ratio + offsetLat,
+            lng: pin1.position.lng + (pin2.position.lng - pin1.position.lng) * ratio + offsetLng,
+          },
+          name: stationNames[Math.floor(Math.random() * stationNames.length)],
+        });
+      }
+    }
+
+    // Also add a few stations near the start and end points
+    stations.push({
+      id: `fake-charger-start-${Date.now()}`,
+      position: {
+        lat: pin1.position.lat + (Math.random() - 0.5) * 0.002,
+        lng: pin1.position.lng + (Math.random() - 0.5) * 0.002,
+      },
+      name: stationNames[Math.floor(Math.random() * stationNames.length)],
+    });
+
+    stations.push({
+      id: `fake-charger-end-${Date.now()}`,
+      position: {
+        lat: pin2.position.lat + (Math.random() - 0.5) * 0.002,
+        lng: pin2.position.lng + (Math.random() - 0.5) * 0.002,
+      },
+      name: stationNames[Math.floor(Math.random() * stationNames.length)],
+    });
+
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+      setIsLoadingChargers(false);
+      console.log(`✅ Generated ${stations.length} fake charging stations`);
+      setChargingStations(stations);
+    }, 800);
+  }, []);
 
   // Calculate route using DirectionsService
   const calculateRoute = useCallback(() => {
@@ -222,12 +322,20 @@ export default function GoogleMapPanel({ visibleToken }: { visibleToken?: number
                 console.log('✓ Setting route path with', path.length, 'points');
                 setRoutePath(path);
                 setRouteError(null); // Clear any previous errors
+                
+                // Generate fake charging stations along the route
+                console.log('Route calculated successfully, generating fake charging stations...');
+                setTimeout(() => {
+                  generateFakeChargingStations(path, pin1, pin2);
+                }, 500);
               } else {
                 console.warn('⚠ Route path is empty after extraction');
                 console.warn('Result structure:', JSON.stringify(result, null, 2).substring(0, 500));
-                // Don't use fallback - show error instead
+                // Even if route path is empty, generate stations between pins
                 setRoutePath([]);
                 setRouteError('Route path is empty');
+                // Still generate fake stations between the pins
+                generateFakeChargingStations([], pin1, pin2);
               }
             } catch (error) {
               console.error('Error processing route result:', error);
@@ -256,6 +364,7 @@ export default function GoogleMapPanel({ visibleToken }: { visibleToken?: number
             // Don't show fallback - let user know there's an issue
             setRoutePath([]);
             setRouteError(errorMessage);
+            setChargingStations([]); // Clear charging stations if route fails
           }
         }
       );
@@ -264,32 +373,42 @@ export default function GoogleMapPanel({ visibleToken }: { visibleToken?: number
       setIsLoadingRoute(false);
       setRoutePath([]);
       setRouteError(`Error: ${error}`);
+      setChargingStations([]); // Clear charging stations on error
     }
-  }, [selectedPins, pins, isLoaded]);
+  }, [selectedPins, pins, isLoaded, generateFakeChargingStations]);
 
-  // Auto-update route when pins change
+  // Auto-update route when pins change (only if auto-route is enabled and we have 2+ pins)
   useEffect(() => {
-    if (autoRoute && pins.length > 0) {
-      const homePin = pins.find(p => p.type === "home");
-      const workPin = pins.find(p => p.type === "work");
-      if (homePin && workPin) {
-        setSelectedPins([homePin.id, workPin.id]);
+    if (autoRoute && pins.length >= 2) {
+      // If we have 2 or more pins and auto-route is on, ensure the last two pins are connected
+      // This ensures that when pins are added/removed, the route updates to show the last two pins
+      const lastTwoPins = pins.slice(-2);
+      if (lastTwoPins.length === 2) {
+        const pin1Id = lastTwoPins[0].id;
+        const pin2Id = lastTwoPins[1].id;
+        
+        // Update selected pins to the last two pins (this works for any pin type combination)
+        setSelectedPins([pin1Id, pin2Id]);
         setShowRoute(true);
-      } else {
-        // If home or work pin is missing, hide route
-        if (selectedPins.length < 2) {
-          setShowRoute(false);
-          setRoutePath([]);
-        }
       }
-    } else if (!autoRoute || pins.length === 0) {
-      // If auto-route is off or no pins, hide route if we don't have 2 selected pins
-      if (selectedPins.length < 2) {
-        setShowRoute(false);
-        setRoutePath([]);
-      }
+    } else if (!autoRoute) {
+      // If auto-route is turned off, don't automatically change selected pins
+      // User can still manually select pins
+    } else if (pins.length < 2) {
+      // If we have less than 2 pins, clear the route
+      setShowRoute(false);
+      setRoutePath([]);
+      setSelectedPins([]);
+      setChargingStations([]); // Clear charging stations when route is cleared
     }
-  }, [pins, autoRoute, selectedPins.length]);
+  }, [pins, autoRoute]);
+
+  // Debug: Log when charging stations change
+  useEffect(() => {
+    if (chargingStations.length > 0) {
+      console.log(`✅ Charging stations state updated: ${chargingStations.length} stations`, chargingStations);
+    }
+  }, [chargingStations]);
 
   // Calculate route when selected pins change and route should be shown
   useEffect(() => {
@@ -312,6 +431,7 @@ export default function GoogleMapPanel({ visibleToken }: { visibleToken?: number
       if (!showRoute || selectedPins.length !== 2) {
         console.log('Clearing route path');
         setRoutePath([]);
+        setChargingStations([]); // Clear charging stations when route is hidden
       }
     }
   }, [showRoute, selectedPins, isLoaded, map, calculateRoute]);
@@ -350,7 +470,7 @@ export default function GoogleMapPanel({ visibleToken }: { visibleToken?: number
   }
 
   return (
-    <div className="relative w-full h-[500px] md:h-[600px]">
+    <div className="relative w-full h-full">
       {/* Pin Type Selector */}
       <div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-lg flex gap-2 z-[1000] shadow-lg border border-gray-200">
         <span className="text-xs text-gray-600 mr-2">Select pin type:</span>
@@ -442,6 +562,40 @@ export default function GoogleMapPanel({ visibleToken }: { visibleToken?: number
             </Marker>
           );
         })}
+        {/* EV Charging Station Markers - Red with lightning bolt */}
+        {showRoute && chargingStations.length > 0 && chargingStations.map((station) => (
+          <Marker
+            key={station.id}
+            position={station.position}
+            icon={{
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 16,
+              fillColor: "#ef4444", // Red color for charging stations
+              fillOpacity: 1,
+              strokeColor: "#ffffff",
+              strokeWeight: 4,
+            }}
+            label={{
+              text: "⚡",
+              color: "#ffffff",
+              fontSize: "20px",
+              fontWeight: "bold",
+            }}
+            title={station.name}
+            zIndex={1001}
+            animation={google.maps.Animation.DROP}
+          />
+        ))}
+        {isLoadingChargers && showRoute && (
+          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 bg-white/95 px-4 py-2 rounded-lg shadow-lg border-2 border-blue-400 z-[1000]">
+            <div className="text-sm text-gray-700 font-semibold">🔍 Loading charging stations...</div>
+          </div>
+        )}
+        {showRoute && !isLoadingChargers && chargingStations.length > 0 && (
+          <div className="absolute top-20 right-2 bg-green-500/95 text-white px-3 py-2 rounded-lg shadow-lg border border-green-600 z-[1000]">
+            <div className="text-xs font-semibold">⚡ {chargingStations.length} charging stations</div>
+          </div>
+        )}
         {showRoute && routePath.length > 0 && (
           <Polyline
             key={`route-${selectedPins.join('-')}`}

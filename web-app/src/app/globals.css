@@ -26,43 +26,69 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Improve range slider styling for dark theme */
-input[type="range"] {
+/* Range slider styling */
+input[type="range"].range-slider {
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
   cursor: pointer;
+  width: 100%;
 }
 
-input[type="range"]::-webkit-slider-track {
-  background: #404040;
-  height: 6px;
-  border-radius: 3px;
+/* Webkit browsers (Chrome, Safari, Edge) */
+input[type="range"].range-slider::-webkit-slider-track {
+  height: 16px;
+  border-radius: 8px;
+  background: transparent;
 }
 
-input[type="range"]::-webkit-slider-thumb {
+input[type="range"].range-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  background: #3b82f6;
-  height: 20px;
-  width: 20px;
+  background: #2563eb;
+  height: 24px;
+  width: 24px;
   border-radius: 50%;
-  margin-top: -7px;
-}
-
-input[type="range"]::-moz-range-track {
-  background: #404040;
-  height: 6px;
-  border-radius: 3px;
-}
-
-input[type="range"]::-moz-range-thumb {
-  background: #3b82f6;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  border: none;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  margin-top: -4px;
+  transition: all 0.2s ease;
+}
+
+input[type="range"].range-slider::-webkit-slider-thumb:hover {
+  background: #1d4ed8;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+/* Firefox */
+input[type="range"].range-slider::-moz-range-track {
+  height: 16px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+}
+
+input[type="range"].range-slider::-moz-range-thumb {
+  background: #2563eb;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input[type="range"].range-slider::-moz-range-thumb:hover {
+  background: #1d4ed8;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+input[type="range"].range-slider::-moz-focus-outer {
+  border: 0;
 }
 
 /* Leaflet map styles */
