@@ -177,7 +177,7 @@ const GlobeComponent = forwardRef<GlobeRef, GlobeProps>(({ countriesData, onCoun
         console.log('Resetting globe appearance...');
         // Reset all visual effects
         globeInstanceRef.current.polygonAltitude(() => 0.02);
-        globeInstanceRef.current.polygonCapColor(() => '#CFDECB');
+        globeInstanceRef.current.polygonCapColor(() => '#dec1ffff');
         globeInstanceRef.current.polygonSideColor(() => 'rgba(207, 222, 203, 0.1)');
         globeInstanceRef.current.polygonLabel(() => '');
         selectedCountryRef.current = null;
@@ -200,11 +200,17 @@ const GlobeComponent = forwardRef<GlobeRef, GlobeProps>(({ countriesData, onCoun
         const globe = new Globe.default(globeRef.current);
         
         // Configure globe appearance with custom colors
-        globe.backgroundColor('#80a8dfff');
+        globe.backgroundColor('#ecf2deff');
         // Use a completely white globe texture
-        globe.globeImageUrl('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjA0OCIgaGVpZ2h0PSIxMDI0IiB2aWV3Qm94PSIwIDAgMjA0OCAxMDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMjA0OCIgaGVpZ2h0PSIxMDI0IiBmaWxsPSIjZmZmZmZmIi8+CjxjaXJjbGUgY3g9IjEwMjQiIGN5PSI1MTIiIHI9IjUxMiIgZmlsbD0iI2ZmZmZmZiIvPgo8L3N2Zz4K');
-        globe.atmosphereColor('#ffffff'); // White atmosphere/halo
-        globe.atmosphereAltitude(0.15); // Make atmosphere more visible
+        // globe.globeImageUrl('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjA0OCIgaGVpZ2h0PSIxMDI0IiB2aWV3Qm94PSIwIDAgMjA0OCAxMDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMjA0OCIgaGVpZ2h0PSIxMDI0IiBmaWxsPSIjZmZmZmZmIi8+CjxjaXJjbGUgY3g9IjEwMjQiIGN5PSI1MTIiIHI9IjUxMiIgZmlsbD0iI2ZmZmZmZiIvPgo8L3N2Zz4K');
+        globe.globeImageUrl('data:image/svg+xml;base64,' +
+        btoa(`<svg width="2048" height="1024" xmlns="http://www.w3.org/2000/svg">
+            <rect width="2048" height="1024" fill="#aee1f9"/>
+            <circle cx="1024" cy="512" r="512" fill="#aee1f9"/>
+        </svg>`));
+
+        globe.atmosphereColor('#ffffffff'); // White atmosphere/halo
+        globe.atmosphereAltitude(0.2); // Make atmosphere more visible
         globe.pointOfView({ altitude: 1.8 }, 0);
         
         // Use only ambient light for completely uniform illumination
@@ -297,7 +303,7 @@ const GlobeComponent = forwardRef<GlobeRef, GlobeProps>(({ countriesData, onCoun
               
               globe.polygonCapColor((d: any) => {
                 if (d === clickedCountry) return '#F2F37F'; // Yellow highlight for selected
-                return '#CFDECB'; // Default land color for others
+                return '#decbddff'; // Default land color for others
               });
               
               globe.polygonSideColor((d: any) => {
@@ -334,7 +340,7 @@ const GlobeComponent = forwardRef<GlobeRef, GlobeProps>(({ countriesData, onCoun
         height: '100%',
         borderRadius: '16px',
         overflow: 'hidden',
-        background: '#ffffff'
+        background: '#ffffffff'
       }}
     />
   );
