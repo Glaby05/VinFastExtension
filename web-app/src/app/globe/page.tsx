@@ -37,15 +37,15 @@ export default function GlobePage() {
     // 1️⃣ Start rotation immediately
     globeRef.current.resumeRotation?.();
 
-    // 2️⃣ After 2s, zoom to Canada
+    // 2️⃣ After 3s, zoom to Canada
     const zoomTimer = setTimeout(() => {
       globeRef.current.enhancedZoomToCountry?.(canada);
-    }, 2000);
+    }, 3000);
 
-    // 3️⃣ After 6s, go to next page
+    // 3️⃣ After 4s, go to next page
     const routeTimer = setTimeout(() => {
       router.push('/chat');
-    }, 6000);
+    }, 4000);
 
     return () => {
       clearTimeout(zoomTimer);

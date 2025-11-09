@@ -177,7 +177,7 @@ const GlobeComponent = forwardRef<GlobeRef, GlobeProps>(({ countriesData, onCoun
         console.log('Resetting globe appearance...');
         // Reset all visual effects
         globeInstanceRef.current.polygonAltitude(() => 0.02);
-        globeInstanceRef.current.polygonCapColor(() => '#dec1ffff');
+        globeInstanceRef.current.polygonCapColor(() => '#c1ffcaff');
         globeInstanceRef.current.polygonSideColor(() => 'rgba(207, 222, 203, 0.1)');
         globeInstanceRef.current.polygonLabel(() => '');
         selectedCountryRef.current = null;
@@ -227,7 +227,7 @@ const GlobeComponent = forwardRef<GlobeRef, GlobeProps>(({ countriesData, onCoun
         }, 100);
         
         // Custom color scheme
-        globe.polygonCapColor(() => '#b5deaaff'); // Land color
+        globe.polygonCapColor(() => '#91db7dff'); // Land color
         globe.polygonSideColor(() => 'rgba(207, 222, 203, 0.1)'); // Land side color
         globe.polygonStrokeColor(() => 'rgba(207, 222, 203, 0.3)'); // Land stroke color
         globe.polygonAltitude(() => 0.02); // Fixed: Set proper base altitude
