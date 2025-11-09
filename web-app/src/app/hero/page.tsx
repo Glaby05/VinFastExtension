@@ -8,7 +8,7 @@ export default function HeroPage() {
   const router = useRouter();
 
   const handleStart = () => {
-    router.push("/chat");
+    router.push("/globe");
   };
 
   return (
