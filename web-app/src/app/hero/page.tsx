@@ -17,9 +17,6 @@ export default function HeroPage() {
       <header className="px-6 md:px-12 py-5 flex items-center justify-between border-b border-gray-200/70 backdrop-blur-sm bg-white/70">
         <div className="flex items-center gap-4">
           <VinFastLogo className="scale-105" />
-          <span className="hidden md:inline text-sm text-gray-500 tracking-wide">
-            — EVE: The VinFast Life
-          </span>
         </div>
         <span className="text-xs text-gray-400 uppercase tracking-wider">Demo</span>
       </header>
@@ -51,7 +48,7 @@ export default function HeroPage() {
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.98 }}
         >
-          Start
+          Start Your Experience
         </motion.button>
       </section>
 
