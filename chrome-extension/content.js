@@ -1,7 +1,7 @@
 if (!document.getElementById("vinfast-btn")) {
   const button = document.createElement("button");
   button.id = "vinfast-btn";
-  button.textContent = "Is EV for you?";
+  button.textContent = "See your life with VinFast";
   document.body.appendChild(button);
 
   button.addEventListener("click", () => {

@@ -2,7 +2,7 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: #71c59d;
+  background-color: #5709ff;
   color: white;
   border: none;
   border-radius: 30px; /* Rounded rectangle */
@@ -20,7 +20,7 @@
 }
 
 #vinfast-btn:hover {
-  background-color: #5aa984;
+  background-color: #655aa9;
   transform: translateY(-2px);
 }
 #vinfast-btn:active {
