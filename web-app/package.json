@@ -9,14 +9,19 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@developer-hub/liquid-glass": "^1.2.3",
     "@react-google-maps/api": "^2.20.7",
     "framer-motion": "^12.23.24",
+    "globe.gl": "^2.44.0",
     "leaflet": "^1.9.4",
     "next": "16.0.1",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-leaflet": "^5.0.0",
-    "recharts": "^3.3.0"
+    "react-three-fiber": "^6.0.13",
+    "recharts": "^3.3.0",
+    "three": "^0.181.0",
+    "three-globe": "^2.45.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
