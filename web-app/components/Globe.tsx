@@ -200,7 +200,7 @@ const GlobeComponent = forwardRef<GlobeRef, GlobeProps>(({ countriesData, onCoun
         const globe = new Globe.default(globeRef.current);
         
         // Configure globe appearance with custom colors
-        globe.backgroundColor('#D8DFE9');
+        globe.backgroundColor('#80a8dfff');
         // Use a completely white globe texture
         globe.globeImageUrl('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjA0OCIgaGVpZ2h0PSIxMDI0IiB2aWV3Qm94PSIwIDAgMjA0OCAxMDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMjA0OCIgaGVpZ2h0PSIxMDI0IiBmaWxsPSIjZmZmZmZmIi8+CjxjaXJjbGUgY3g9IjEwMjQiIGN5PSI1MTIiIHI9IjUxMiIgZmlsbD0iI2ZmZmZmZiIvPgo8L3N2Zz4K');
         globe.atmosphereColor('#ffffff'); // White atmosphere/halo
@@ -221,7 +221,7 @@ const GlobeComponent = forwardRef<GlobeRef, GlobeProps>(({ countriesData, onCoun
         }, 100);
         
         // Custom color scheme
-        globe.polygonCapColor(() => '#CFDECB'); // Land color
+        globe.polygonCapColor(() => '#b5deaaff'); // Land color
         globe.polygonSideColor(() => 'rgba(207, 222, 203, 0.1)'); // Land side color
         globe.polygonStrokeColor(() => 'rgba(207, 222, 203, 0.3)'); // Land stroke color
         globe.polygonAltitude(() => 0.02); // Fixed: Set proper base altitude
