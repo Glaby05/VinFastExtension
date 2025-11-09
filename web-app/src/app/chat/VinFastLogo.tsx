@@ -39,6 +39,7 @@ export default function VinFastLogo({
           viewBox="0 0 40 40"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          style={{ transform: "rotate(180deg)" }}  // Flip the logo upright
         >
           <defs>
             {/* Metallic silver gradient */}
