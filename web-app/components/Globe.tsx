@@ -2,7 +2,7 @@
 
 import React, { forwardRef, useImperativeHandle, useEffect, useRef } from 'react';
 
-interface GlobeRef {
+export interface GlobeRef {
   zoomToCountry: (country: any) => void;
   selectCountry: (country: any, isSearchSelection?: boolean) => void;
   enhancedZoomToCountry: (country: any) => void;
@@ -192,6 +192,8 @@ const GlobeComponent = forwardRef<GlobeRef, GlobeProps>(({ countriesData, onCoun
   }));
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!globeRef.current) return;
     if (typeof window !== 'undefined') {
       // Dynamically import Globe only on client side
       import('globe.gl').then((Globe) => {
